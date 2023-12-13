@@ -4,13 +4,33 @@
 import dotenv from "dotenv";
 // import mongoose, { connect } from "mongoose";
 // import DB_NAME from "./constants";
-import express from "express";
 import connectDB from "./db/index.js";
-
+import app from "./app.js";
 dotenv.config({
   path: "./env",
 });
-connectDB();
+
+//whenever the asynchronous code is written
+//technically it will returns us a promise
+//so we are using then and catch here
+
+connectDB()
+  .then(() => {
+    app.listen(process.env.PORT || 8000, () => {
+      console.log(`Server is running at port :
+     ${process.env.PORT}`);
+      //the above line can create a problem
+      //since if 8000 goes into play
+    });
+    //the below line catches the async error
+    app.on("error", (error) => {
+      console.log("ERR:", error);
+      throw error;
+    });
+  })
+  .catch((err) => {
+    console.log("MONGO DB CONNECTION FAILED : ", err);
+  });
 
 //always DB's are always part of the other continent
 //so let it be async
